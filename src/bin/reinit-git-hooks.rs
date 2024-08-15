@@ -7,6 +7,7 @@ use std::{
 
 use anyhow::{bail, Context, Result};
 use clap::Parser;
+use hermannm_scripts::init_logger;
 use tracing::info;
 use walkdir::WalkDir;
 
@@ -19,10 +20,7 @@ struct Args {
 }
 
 fn main() -> Result<()> {
-    tracing_subscriber::fmt()
-        .without_time()
-        .with_target(false)
-        .init();
+    init_logger();
 
     let args = Args::parse();
     let current_dir = current_dir().context("Failed to get current dir")?;
