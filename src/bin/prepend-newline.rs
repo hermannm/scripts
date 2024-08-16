@@ -1,10 +1,12 @@
 use std::{
     fs::OpenOptions,
     io::{Read, Seek, SeekFrom, Write},
+    process::ExitCode,
 };
 
 use anyhow::{Context, Result};
 use clap::Parser;
+use hermannm_scripts::run_script;
 
 /// Prepends the contents of a given file with a newline IF it already starts with a newline.
 ///
@@ -22,7 +24,11 @@ struct Args {
     file_path: String,
 }
 
-fn main() -> Result<()> {
+fn main() -> ExitCode {
+    run_script(prepend_newline)
+}
+
+fn prepend_newline() -> Result<()> {
     let args = Args::parse();
 
     let mut file = OpenOptions::new()

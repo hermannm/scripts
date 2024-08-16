@@ -2,12 +2,12 @@ use std::{
     env::{current_dir, set_current_dir},
     ffi::OsStr,
     fs::remove_file,
-    process::{Command, Stdio},
+    process::{Command, ExitCode, Stdio},
 };
 
 use anyhow::{bail, Context, Result};
 use clap::Parser;
-use hermannm_scripts::init_logger;
+use hermannm_scripts::run_script;
 use tracing::info;
 use walkdir::WalkDir;
 
@@ -19,9 +19,11 @@ struct Args {
     root_dir: String,
 }
 
-fn main() -> Result<()> {
-    init_logger();
+fn main() -> ExitCode {
+    run_script(reinit_git_hooks)
+}
 
+fn reinit_git_hooks() -> Result<()> {
     let args = Args::parse();
     let current_dir = current_dir().context("Failed to get current dir")?;
 
