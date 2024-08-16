@@ -11,7 +11,7 @@ pub fn run_script(script: impl FnOnce() -> anyhow::Result<()>) -> ExitCode {
     match result {
         Ok(_) => ExitCode::SUCCESS,
         Err(error) => {
-            log_error(error);
+            log_error(&error);
             ExitCode::FAILURE
         }
     }
