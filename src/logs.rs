@@ -18,8 +18,14 @@ pub(crate) fn init_logger() {
         .init();
 }
 
-pub(crate) fn log_error(error: &anyhow::Error) {
-    error!(cause = error.source(), "{}", error.to_string());
+pub(crate) trait Log {
+    fn log(&self);
+}
+
+impl Log for anyhow::Error {
+    fn log(&self) {
+        error!(cause = self.source(), "{}", self.to_string());
+    }
 }
 
 /// A log field formatter for `tracing`, with a prettified, newline-delimited format. This
@@ -152,12 +158,13 @@ impl<'a> Visit for DevLogFieldVisitor<'a> {
             return;
         }
 
-        // If the error has no cause, we just log the error
+        // If the error has no cause, we just write the error string
         let Some(cause) = error.source() else {
             self.write_string_field(field, &error.to_string());
             return;
         };
 
+        // If the error has a cause, we format it as a list where each cause is a list item
         self.write_field_name(field);
         self.write_string_list_item(&error.to_string());
         self.write_string_list_item(&cause.to_string());
