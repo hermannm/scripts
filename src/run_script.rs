@@ -1,6 +1,8 @@
-use std::process::ExitCode;
+use std::{ops::Deref, process::ExitCode};
 
-use crate::logs::{init_logger, Log};
+use tracing::error;
+
+use crate::logs::init_logger;
 
 #[inline]
 #[must_use] // must_use, so ExitCode is not accidentally discarded
@@ -11,7 +13,7 @@ pub fn run_script(script: impl FnOnce() -> anyhow::Result<()>) -> ExitCode {
     match result {
         Ok(_) => ExitCode::SUCCESS,
         Err(error) => {
-            error.log();
+            error!(cause = error.deref());
             ExitCode::FAILURE
         }
     }

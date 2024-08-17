@@ -1,10 +1,7 @@
 use core::fmt;
 use std::{error::Error, fmt::Debug};
 
-use tracing::{
-    error,
-    field::{Field, Visit},
-};
+use tracing::field::{Field, Visit};
 use tracing_subscriber::{
     field::{MakeVisitor, VisitFmt, VisitOutput},
     fmt::format::Writer,
@@ -16,16 +13,6 @@ pub(crate) fn init_logger() {
         .without_time()
         .with_target(false)
         .init();
-}
-
-pub(crate) trait Log {
-    fn log(&self);
-}
-
-impl Log for anyhow::Error {
-    fn log(&self) {
-        error!(cause = self.source(), "{}", self.to_string());
-    }
 }
 
 /// A log field formatter for `tracing`, with a prettified, newline-delimited format. This
@@ -158,7 +145,24 @@ impl<'a> Visit for DevLogFieldVisitor<'a> {
         }
     }
 
-    fn record_error(&mut self, field: &Field, error: &(dyn Error + 'static)) {
+    fn record_error(&mut self, field: &Field, mut error: &(dyn Error + 'static)) {
+        // If an error is the first message, that means we haven't got a main log message (since
+        // that will be the first message, called "message"). In this case, we add special case
+        // handling if the field is called "cause", using the error's message as the main log
+        // message, and adding the error's cause as the "cause" log field, if any.
+        if self.first_visit {
+            self.first_visit = false;
+
+            if field.name() == "cause" {
+                self.result = self.writer().write_str(&error.to_string());
+
+                match error.source() {
+                    Some(cause) => error = cause,
+                    None => return,
+                }
+            }
+        }
+
         self.delimit();
         if self.result.is_err() {
             return;
