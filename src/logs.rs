@@ -129,21 +129,27 @@ impl<'a> DevLogFieldVisitor<'a> {
             return;
         }
 
-        // The first field is the main log message, which we don't want to delimit
-        if !self.first_visit {
-            self.result = self.writer().write_str(LOG_FIELD_DELIMITER);
-        }
+        self.result = self.writer().write_str(LOG_FIELD_DELIMITER);
     }
 }
 
 impl<'a> Visit for DevLogFieldVisitor<'a> {
     fn record_debug(&mut self, field: &Field, value: &dyn Debug) {
-        self.delimit();
+        // A log line may or may not contain a main log message, which will be the first field and
+        // have the name "message". If we do get such a message, we don't want to delimit or write
+        // field name for it.
+        if self.first_visit && field.name() != "message" {
+            self.first_visit = false;
+        }
+
+        if !self.first_visit {
+            self.delimit();
+        }
+
         if self.result.is_err() {
             return;
         }
 
-        // The first field is the main log message, which we want to write without field name
         if self.first_visit {
             self.first_visit = false;
             self.result = write!(self.writer, "{value:?}")
