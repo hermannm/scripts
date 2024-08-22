@@ -6,6 +6,7 @@ authors = ["hermannm"]
 
 [dependencies]
 anyhow = "1.0.83"
+base64 = "0.22.1"
 chrono = "0.4.38"
 clap = { version = "4.5.4", features = ["derive"] }
 tracing = "0.1.40"
