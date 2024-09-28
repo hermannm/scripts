@@ -169,6 +169,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
+name = "devlog-tracing"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "081f2f545879eeb46f43130ebe2077bac95ff5538306b125a899b7563ae80023"
+dependencies = [
+ "chrono",
+ "tracing",
+ "tracing-core",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -193,6 +205,7 @@ dependencies = [
  "base64",
  "chrono",
  "clap",
+ "devlog-tracing",
  "tracing",
  "tracing-subscriber",
  "uuid",

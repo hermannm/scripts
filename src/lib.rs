@@ -1,4 +1,18 @@
-pub use run_script::run_script;
+use std::{ops::Deref, process::ExitCode};
 
-mod logs;
-mod run_script;
+use tracing::error;
+
+#[inline]
+#[must_use] // must_use, so ExitCode is not accidentally discarded
+pub fn run_script(script: impl FnOnce() -> anyhow::Result<()>) -> ExitCode {
+    devlog_tracing::subscriber().init();
+
+    let result = script();
+    match result {
+        Ok(_) => ExitCode::SUCCESS,
+        Err(error) => {
+            error!(cause = error.deref());
+            ExitCode::FAILURE
+        }
+    }
+}
