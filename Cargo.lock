@@ -170,9 +170,9 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
 name = "devlog-tracing"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "081f2f545879eeb46f43130ebe2077bac95ff5538306b125a899b7563ae80023"
+checksum = "5d46f96f912b7ac104aa029437e47067332e6e4189e72d81f7728430752ed4de"
 dependencies = [
  "chrono",
  "tracing",
@@ -207,7 +207,6 @@ dependencies = [
  "clap",
  "devlog-tracing",
  "tracing",
- "tracing-subscriber",
  "uuid",
  "walkdir",
 ]
